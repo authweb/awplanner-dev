@@ -25,6 +25,7 @@ export default defineConfig({
       },
     })  
   ],
+  base: '/aw_dbplanner/',
   server: {
     proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: true } },
   },
