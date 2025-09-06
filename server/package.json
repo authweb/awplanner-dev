@@ -5,6 +5,9 @@
     "scripts": {
         "ping": "tsx scripts/ping.ts",
         "dev": "tsx watch src/index.ts",
+        "migrate:new": "tsx scripts/new-migration.ts",
+        "migrate:new:named": "tsx scripts/new-migration.ts --name",
+        "migrate": "tsx scripts/migrate.ts",
         "build": "tsc -p tsconfig.json",
         "build:pages": "vite build --mode pages",
         "start": "node dist/index.js"

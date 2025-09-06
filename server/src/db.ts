@@ -3,7 +3,6 @@
 
 import 'dotenv/config'
 import { Pool, type QueryResultRow } from 'pg'
-import { DATABASE_URL } from './env';
 
 export const pool = new Pool({
   host: process.env.PGHOST, 
@@ -61,4 +60,47 @@ export async function sqlInsert<T extends QueryResultRow = QueryResultRow>(
     throw new Error('Insert failed, no rows returned')
   }
   return rows[0]
+}
+
+// должно быть именно так (именованный export)
+export async function withTransaction<T>(
+  fn: (q: {
+    sql: <R extends QueryResultRow = QueryResultRow>(
+      text: string,
+      params?: unknown[]
+    ) => Promise<R[]>;
+    sqlOne: <R extends QueryResultRow = QueryResultRow>(
+      text: string,
+      params?: unknown[]
+    ) => Promise<R | null>;
+  }) => Promise<T>
+): Promise<T> {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const q = {
+      sql: async <R extends QueryResultRow = QueryResultRow>(
+        text: string,
+        params?: unknown[]
+      ): Promise<R[]> => (await client.query<R>(text, params)).rows,
+
+      sqlOne: async <R extends QueryResultRow = QueryResultRow>(
+        text: string,
+        params?: unknown[]
+      ): Promise<R | null> => {
+        const rows = (await client.query<R>(text, params)).rows;
+        return rows[0] ?? null;
+      },
+    };
+
+    const out = await fn(q);
+    await client.query('COMMIT');
+    return out;
+  } catch (e) {
+    try { await client.query('ROLLBACK'); } catch {}
+    throw e;
+  } finally {
+    client.release();
+  }
 }
