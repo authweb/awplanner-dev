@@ -1,6 +1,6 @@
 {
     "name": "aw-planner-server",
-    "private": true,
+    "private": false,
     "type": "module",
     "scripts": {
         "ping": "tsx scripts/ping.ts",
