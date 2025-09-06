@@ -1,16 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { sql, withTransaction } from "../src/db"; // tsx запускает TS напрямую
+import { fileURLToPath } from "node:url";
+import { sql, withTransaction } from "../src/db";
 
-const CWD = process.cwd();
-const CANDIDATES = [
-  path.join(CWD, 'migrations'),            // когда cwd = server
-  path.join(CWD, 'server', 'migrations'),  // когда cwd = корень монорепы
-];
-const MIGRATIONS_DIR = CANDIDATES.find(fs.existsSync) ?? CANDIDATES[0];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const MIGRATIONS_DIR = path.resolve(__dirname, "../migrations");
 const TABLE = "_migrations";
-const LOCK_KEY = 4815162342; // любой стабильный int64 для advisory lock
+const LOCK_KEY = 4815162342;
 
 async function ensureTable() {
   await sql(`
