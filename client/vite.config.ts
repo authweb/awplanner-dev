@@ -1,9 +1,10 @@
+// client/vite.config.ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import svgr from 'vite-plugin-svgr'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
@@ -15,18 +16,17 @@ export default defineConfig({
           multipass: true,
           plugins: [
             { name: 'preset-default', params: { overrides: { removeViewBox: false } } },
-            // Сносим ВСЁ, что мешает управлять извне
-            { name: 'removeAttrs', params: { attrs: ['style', 'class', 'data-name', 'stroke', 'fill', 'stroke-width'] } },
+            { name: 'removeAttrs', params: { attrs: ['style','class','data-name','stroke','fill','stroke-width'] } },
             { name: 'removeDimensions', active: true },
           ],
         },
-        // Проставим дефолты на корневой <svg>
         svgProps: { stroke: 'currentColor', fill: 'none' },
       },
-    })  
+    }),
   ],
-  base: '/aw_dbplanner/',
+  // локал/Codespaces → '/', GitHub Pages → '/awplanner-dev/'
+  base: mode === 'pages' ? '/awplanner-dev/' : '/',
   server: {
     proxy: { '/api': { target: 'http://localhost:3000', changeOrigin: true } },
   },
-})
+}))

@@ -23,7 +23,7 @@ const qc = new QueryClient({
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<QueryClientProvider client={qc}>
-			<BrowserRouter /* basename="/если_нужен_подпуть" */>
+			<BrowserRouter basename={import.meta.env.BASE_URL}>
 				<Routes>
 					<Route path='/' element={<LandingRedirect />} />
 					<Route path='/p/:projectId' element={<BoardPage />} />

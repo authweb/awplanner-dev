@@ -6,6 +6,7 @@
         "ping": "tsx scripts/ping.ts",
         "dev": "tsx watch src/index.ts",
         "build": "tsc -p tsconfig.json",
+        "build:pages": "vite build --mode pages",
         "start": "node dist/index.js"
     },
     "dependencies": {
