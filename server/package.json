@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "ping": "tsx scripts/ping.ts",
         "dev": "tsx watch src/index.ts",
         "build": "tsc -p tsconfig.json",
         "start": "node dist/index.js"
